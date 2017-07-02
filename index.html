@@ -1,0 +1,99 @@
+<html>
+
+    <head>
+        <meta charset="UTF-8" />
+        <title>Zacks Text Adventure!</title>
+        <style>
+            #gamewindow {
+                border: 2px solid black;
+            }
+        </style>
+
+
+    </head>
+    <body>
+        
+
+        <h1>The Game</h1>
+        <!-- This is a comment -->
+
+        <p>Welcome. Thank you for playing.</p>
+
+
+        <!-- This is the main game window for our text adventure -->
+        <div id="gamewindow">
+
+        </div>
+
+
+        <!-- Here is the main script for our game -->
+        <script type="text/javascript" rel="javascript">
+
+            // This is a JacaScript comment
+            player = {};
+
+
+            name = prompt( "Hello. Please enter your name: " );
+
+            player.name = name;
+
+            alert( "Hello " + name );
+
+            answer = prompt("Please select a weapon. [1] Axe, [2], Sword or [3] Bow.");
+
+            if ( answer === "1" ) {
+                alert("You have selected the AXE!");
+                player.weapon = "axe";
+            }
+            else if ( answer === "2" ) {
+                alert("You have selected the SWORD!");
+                player.weapon = "sword";
+            }
+            else if ( answer === "3" ) {
+                alert("You have selected the BOW!");
+                player.weapon = "bow";
+            }
+            else {
+                alert("\""+answer+"\" is not an available weapon.");
+            }
+
+            function meleeAttackWithWeapon( weapon ) {
+
+                // This function requires a weapon to be passed.
+                // Set's our default damage
+
+                damage = 0;
+
+                // Check the weapons passed and set the damage
+                if ( weapon === 'axe' ) {
+                    damage = 2;
+                }
+                else if ( weapon === 'sword' ) {
+                    damage = 3;
+                }
+                else if ( weapon === 'bow' ) {
+                    damage = 0;
+                }
+
+                // Return the damage
+                return damage;
+
+            }
+
+            console.log("A monsters appears! You attack with your weapon");
+
+            // Here we call the attack_melee() function, and pass the player.weapon as an argument.
+            damageDone = meleeAttackWithWeapon( player.weapon );
+            console.log("You did " + damageDone );
+
+            damageDone = meleeAttackWithWeapon( 'sword' );
+            console.log("You did " + damageDone );
+
+            damageDone = meleeAttackWithWeapon( 'bow' );
+            console.log("You did " + damageDone );
+
+
+        </script>
+    </body>
+
+</html>
