@@ -1,99 +1,327 @@
+<!DOCTYPE html>
 <html>
 
     <head>
         <meta charset="UTF-8" />
-        <title>Zacks Text Adventure!</title>
-        <style>
-            #gamewindow {
-                border: 2px solid black;
-            }
-        </style>
-
-
+        <title>A Text Adventure</title>
     </head>
     <body>
-        
 
-        <h1>The Game</h1>
-        <!-- This is a comment -->
-
-        <p>Welcome. Thank you for playing.</p>
-
-
-        <!-- This is the main game window for our text adventure -->
-        <div id="gamewindow">
-
+        <div id="game-window">
         </div>
-
+        <input id="input" />
+        <div id="notifications"></div>
 
         <!-- Here is the main script for our game -->
         <script type="text/javascript" rel="javascript">
 
-            // This is a JacaScript comment
-            player = {};
+            var colors = [
+                'blue',
+                'orange',
+                'bloodred',
+                'turquiose',
+                'aquamarine',
+                'bone',
+                'black',
+                'moss'];
 
-
-            name = prompt( "Hello. Please enter your name: " );
-
-            player.name = name;
-
-            alert( "Hello " + name );
-
-            answer = prompt("Please select a weapon. [1] Axe, [2], Sword or [3] Bow.");
-
-            if ( answer === "1" ) {
-                alert("You have selected the AXE!");
-                player.weapon = "axe";
-            }
-            else if ( answer === "2" ) {
-                alert("You have selected the SWORD!");
-                player.weapon = "sword";
-            }
-            else if ( answer === "3" ) {
-                alert("You have selected the BOW!");
-                player.weapon = "bow";
-            }
-            else {
-                alert("\""+answer+"\" is not an available weapon.");
-            }
-
-            function meleeAttackWithWeapon( weapon ) {
-
-                // This function requires a weapon to be passed.
-                // Set's our default damage
-
-                damage = 0;
-
-                // Check the weapons passed and set the damage
-                if ( weapon === 'axe' ) {
-                    damage = 2;
+            function checkMagicLevel( mLevel ) {
+                if (  mLevel === 1  ){
+                   console.log("You have the power!");
                 }
-                else if ( weapon === 'sword' ) {
-                    damage = 3;
+                else if ( mLevel >= 2 ){
+                   console.log("You are talented at using sorcery. And kind of scary.");
                 }
-                else if ( weapon === 'bow' ) {
-                    damage = 0;
+                else {
+                   console.log("You are just a normy.");
                 }
+            }
 
-                // Return the damage
-                return damage;
+
+            // Set up game window
+            var gameWindow = document.getElementById('game-window');
+            gameWindow.innerHTML = "Welcome...";
+
+            // Set up a way for the player to input text
+            var playerInput = document.getElementById('input');
+            var input = ''; // raw player input
+            var answer = ''; // used for specific question
+            var messages = []; // stores previous input
+            var questionList = []; // List of question objects
+
+            // Set up a notification area
+            var notifications = document.getElementById('notifications');
+
+            // Set up
+            var count = 0;
+
+            // Set up id tracker used to give things unique ids
+            var globalId = 0;
+
+            // Set up input event listener for the input box
+            playerInput.onkeypress = function(e){
+            
+                if (!e) e = window.event;
+            
+                var keyCode = e.keyCode || e.which;
+            
+                if ( keyCode == '13' ){
+                    update();
+                }
+            }
+
+
+            var commands = [
+                'attack',
+                'take',
+                'talk',
+                'use',
+                'walk'];
+
+            var command = '';
+
+            function parseInput(input){
+
+                command = input.split(' ');
+
+                if ( commands.indexOf( command[0].toLowerCase() ) != -1 ) {
+                    console.log("Command found");
+                    doCommand(command);
+
+                } else {
+                    console.log("\""+command+"\" command not found.");
+                     notifications.innerHTML = "Not found.";
+                }
 
             }
 
-            console.log("A monsters appears! You attack with your weapon");
+            function doCommand( command ) {
 
-            // Here we call the attack_melee() function, and pass the player.weapon as an argument.
-            damageDone = meleeAttackWithWeapon( player.weapon );
-            console.log("You did " + damageDone );
+                command[0] = command[0].toLowerCase();
 
-            damageDone = meleeAttackWithWeapon( 'sword' );
-            console.log("You did " + damageDone );
+                if ( command[0] == 'attack' ) {
+                    doAttack(command);
+                } else if ( command[0] == 'take' ) {
+                    doTake(command);
+                } else if ( command[0] == 'talk' ) {
+                    doTalk(command);
+                } else if ( command[0] == 'use' ) {
+                    doUse(command);
+                } else if ( command[0] == 'walk' ) {
+                    doWalk(command);
+                }
 
-            damageDone = meleeAttackWithWeapon( 'bow' );
-            console.log("You did " + damageDone );
+            }
 
+            function doAttack(){
+                console.log("Attacking...");
+            }
+            function doTake(){
+                console.log("Taking...");
+            }
+            function doTalk(){
+                console.log("Talking...");
+            }
+            function doUse(){
+                console.log("Using...");
+            }
+            function doWalk(){
+                console.log("Walking...");
+            }
+
+            function output( outputString ) {
+                gameWindow.innerHTML += "<br/>"+outputString;
+            }
+
+            function nameSay( name, outputString ) {
+                output( name + "> " + outputString);
+            }
+            // var answer = '';
+            // function setAnswer( input ){
+            //     answer = input;
+            //     console.log("Setting answer to: "+answer);
+            // }
+
+            function getAnswer(){
+                console.log("Getting answer: "+answer);
+                return answer;
+            }
+
+            //------------------------------------
+            //  Initialize the game
+            //------------------------------------
+
+            var player = {
+                'name': 'Joxer'
+            }
+
+            player.name; // "Joxer"
+
+            function initializeGame( player ){
+
+                input = '';
+                
+                // output("Hello traveller! What is <i>your</i> name?");
+                // isExpectingAnswer = true;
+
+                question = new questionClass({
+                    'name': 'intro',
+                    'questionText': 'Hello traveller! What is <i>your</i> name?',
+                    'optionText': "Enter your name",
+                    'optionInputs': ['1','2','3'],
+                    'optionList': {
+                        '1': {
+                            'label': "Say 'hello'",
+                            'command': 'nameSay',
+                            'args': [player.name, "Hello."]
+                        },
+                        '2': {
+                            'label': "Say 'maybe'",
+                            'command': 'nameSay',
+                            'args': [player.name, "Maybe Not."]
+                        },
+                        '3': {
+                            'label': "Say 'no'",
+                            'command': 'nameSay',
+                            'args': [player.name, "No. Bother someone else."]
+                        }
+                    }
+                });
+
+                doQuestionByName('intro');
+
+                // player.name = answer;
+                // output("Welcome "+player.name);
+            }
+
+            initializeGame( player );
+
+            // function question( questionText, optionText, options ){
+
+            //     output(questionText + "<br/>"+optionText);
+            //     isExpectingAnswer = true;
+            //     questionIdTracker =  
+            //     questionOptions = options;
+            // }
+
+            function questionClass( obj ) {
+
+                this.id = idTicker();
+                this.name = obj.name;
+                this.questionText = obj.questionText;
+                this.optionText = obj.optionText;
+                this.optionInputs = obj.optionInputs;   // items
+                this.optionList = obj.optionList;       // an array of option objects:
+                                                        //   [{ 'command', 'outcome' }, { 'command', 'outcome' } ... ]
+                questionList.push(this);
+            }
+
+            function idTicker(){
+                globalId += 1;
+                return globalId;
+            }
+
+            function doAnswer( questionId ) {
+                var q = getQuestionById(questionId);
+
+                var choice = parseInputForOptionInputs(input, q.optionInputs);
+
+                console.log("Doing answer. Question id: "+questionId+", optionInputs: "+q.optionInputs+", choice: "+choice);
+                // Do the choice
+                return q.optionList[choice];
+
+            }
+
+            function doQuestionByName( name ){
+                
+                var q = getQuestionByName(name);
+
+                output(q.questionText + "<br/>");
+                output( "<span class=\"option-text\">" + q.optionText +"</span>");
+
+                for (var i = 0; i < q.optionInputs.length; i++) {
+                    output("["+q.optionInputs[i] + "] " + q.optionList[q.optionInputs[i]]['label'] );
+                }
+
+                isExpectingAnswer = true;
+                questionIdTracker = q.id;
+            }
+
+            function getQuestionByName( name ){
+
+                var q = null;
+
+                for (var i=0; i < questionList.length; i++){
+                    if ( questionList[i].name === name ) {
+                        q = questionList[i];
+                        return q;
+                    }
+                }
+
+                if (q === null){
+                    return false;
+                }
+            }
+
+            function getQuestionById( id ){
+
+                var q = null; 
+
+                for (var i=0;i < questionList.length;i++){
+                    if ( questionList[i].id === id ) {
+                        q = questionList[i];
+                        return q;
+                    }
+                }
+
+                if (q === null){
+                    return false;
+                }
+            }
+
+            function parseInputForOptionInputs( input, optionInputs ) {
+
+                var o = optionInputs.indexOf( input.toLowerCase() );
+                if ( o != -1 ) {
+                    console.log("\""+input+"\" is an option in "+optionInputs);
+                    return optionInputs[o];
+
+                } else {
+                    console.log("\""+input+"\" is not found in "+optionInputs);
+                    notifications.innerHTML = "\""+input+"\" is not an option.";
+                    return false;
+                }
+
+            }
+
+
+            //------------------------------------
+            //  The game loop
+            //------------------------------------
+
+            function update() {
+
+                // Enter key is pressed
+                console.log("Input: "+playerInput.value);
+                input = playerInput.value;
+                messages.push(input);
+                // Reset player input element to blank
+                playerInput.value = '';
+
+                // If the game is expecting an answer, then save it
+                if (isExpectingAnswer) {
+                    answer = input;
+                    // Reset flag
+                    isExpectingAnswer = false;
+
+                    doAnswer(questionIdTracker);
+                } else {
+                    parseInput(input);    
+                }
+            
+                count += 1;
+            }
 
         </script>
     </body>
-
 </html>
