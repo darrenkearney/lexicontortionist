@@ -228,8 +228,9 @@
 
                 console.log("Doing answer. Question id: "+questionId+", optionInputs: "+q.optionInputs+", choice: "+choice);
                 // Do the choice
-                return q.optionList[choice];
 
+                console.log(q.optionList[choice]);
+                q.optionList[choice]['command']("Test", "Message");
             }
 
             function doQuestionByName( name ){
