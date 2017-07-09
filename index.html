@@ -4,325 +4,113 @@
     <head>
         <meta charset="UTF-8" />
         <title>A Text Adventure</title>
+        <style>
+body {
+    background: #2d2d2d;
+}
+body.flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+.faded-grey {
+    color: rgba(150,150,150,0.8);
+}
+
+.container {
+    width: 400px;
+}
+
+.primary-color {
+    color: #2cff71;
+}
+
+.primary-bg {
+    background-color: #2cff71;
+}
+
+.primary-border,
+#input.primary-border {
+    border-color: #2cff71;
+    border-top-color: #2cff71;
+    border-right-color: #17de58;
+    border-bottom-color: #2fb75c;
+    border-left-color: #2cff71;
+}
+
+.secondary-bg {
+    background-color: #5a514b;
+}
+
+.secondary-color {
+    color: #5a514b;
+}
+
+.secondary-border,
+#game-window.secondary-border  {
+    border-color: #5a514b;
+    border-top-color: #5a514b;
+    border-right-color: #885e43;
+    border-bottom-color: #8e6448;
+    border-left-color: #5a514b;
+}
+
+
+#game-window {
+    padding: 20px;
+    border: 4px solid #5a514b;
+    height: 300px;
+    width: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    box-shadow: inset 0px 20px 20px -16px rgba(0,0,0,0.5);
+}
+.output {
+    opacity: 0.9;
+}
+
+#input {
+    width: 400px;
+    padding: 20px;
+    margin: 0;
+    border: 4px solid #ada39d;
+    background: #3c3939;
+    color: #f5da00;
+    font-size: 200%;
+    font-family: monospace;
+    font-weight: 600;
+    transition: all 200ms ease;
+    box-shadow: none;
+}
+
+.border-dashed,
+#input.border-dashed {
+    border-style: dashed;
+}
+
+#notifications {
+
+}
+* {
+    box-sizing:border-box;
+}
+        </style>
     </head>
-    <body>
-
-        <div id="game-window">
+    <body class="flex">
+        <div class="container">
+            <h1 class="secondary-color">A text adventure</h1>
+            <div id="game-window" class="primary-color secondary-bg secondary-border">
+            </div>
+            <input id="input" type="text" />
+            <div id="notifications"></div>
         </div>
-        <input id="input" />
-        <div id="notifications"></div>
-
         <!-- Here is the main script for our game -->
-        <script type="text/javascript" rel="javascript">
-
-            var colors = [
-                'blue',
-                'orange',
-                'bloodred',
-                'turquiose',
-                'aquamarine',
-                'bone',
-                'black',
-                'moss'];
-
-            function checkMagicLevel( mLevel ) {
-                if (  mLevel === 1  ){
-                   console.log("You have the power!");
-                }
-                else if ( mLevel >= 2 ){
-                   console.log("You are talented at using sorcery. And kind of scary.");
-                }
-                else {
-                   console.log("You are just a normy.");
-                }
-            }
-
-
-            // Set up game window
-            var gameWindow = document.getElementById('game-window');
-            gameWindow.innerHTML = "Welcome...";
-
-            // Set up a way for the player to input text
-            var playerInput = document.getElementById('input');
-            var input = ''; // raw player input
-            var answer = ''; // used for specific question
-            var messages = []; // stores previous input
-            var questionList = []; // List of question objects
-
-            // Set up a notification area
-            var notifications = document.getElementById('notifications');
-
-            // Set up
-            var count = 0;
-
-            // Set up id tracker used to give things unique ids
-            var globalId = 0;
-
-            // Set up input event listener for the input box
-            playerInput.onkeypress = function(e){
-            
-                if (!e) e = window.event;
-            
-                var keyCode = e.keyCode || e.which;
-            
-                if ( keyCode == '13' ){
-                    update();
-                }
-            }
-
-
-            var commands = [
-                'attack',
-                'take',
-                'talk',
-                'use',
-                'walk'];
-
-            var command = '';
-
-            function parseInput(input){
-
-                command = input.split(' ');
-
-                if ( commands.indexOf( command[0].toLowerCase() ) != -1 ) {
-                    console.log("Command found");
-                    doCommand(command);
-
-                } else {
-                    console.log("\""+command+"\" command not found.");
-                     notifications.innerHTML = "Not found.";
-                }
-
-            }
-
-            function doCommand( command ) {
-
-                command[0] = command[0].toLowerCase();
-
-                if ( command[0] == 'attack' ) {
-                    doAttack(command);
-                } else if ( command[0] == 'take' ) {
-                    doTake(command);
-                } else if ( command[0] == 'talk' ) {
-                    doTalk(command);
-                } else if ( command[0] == 'use' ) {
-                    doUse(command);
-                } else if ( command[0] == 'walk' ) {
-                    doWalk(command);
-                }
-
-            }
-
-            function doAttack(){
-                console.log("Attacking...");
-            }
-            function doTake(){
-                console.log("Taking...");
-            }
-            function doTalk(){
-                console.log("Talking...");
-            }
-            function doUse(){
-                console.log("Using...");
-            }
-            function doWalk(){
-                console.log("Walking...");
-            }
-
-            function output( outputString ) {
-                gameWindow.innerHTML += "<br/>"+outputString;
-            }
-
-            function nameSay( name, outputString ) {
-                output( name + "> " + outputString);
-            }
-            // var answer = '';
-            // function setAnswer( input ){
-            //     answer = input;
-            //     console.log("Setting answer to: "+answer);
-            // }
-
-            function getAnswer(){
-                console.log("Getting answer: "+answer);
-                return answer;
-            }
-
-            //------------------------------------
-            //  Initialize the game
-            //------------------------------------
-
-            var player = {
-                'name': 'Joxer'
-            }
-
-            player.name; // "Joxer"
-
-            function initializeGame( player ){
-
-                input = '';
-                
-                // output("Hello traveller! What is <i>your</i> name?");
-                // isExpectingAnswer = true;
-
-                question = new questionClass({
-                    'name': 'intro',
-                    'questionText': 'Hello traveller! What is <i>your</i> name?',
-                    'optionText': "Enter your name",
-                    'optionInputs': ['1','2','3'],
-                    'optionList': {
-                        '1': {
-                            'label': "Say 'hello'",
-                            'command': 'nameSay',
-                            'args': [player.name, "Hello."]
-                        },
-                        '2': {
-                            'label': "Say 'maybe'",
-                            'command': 'nameSay',
-                            'args': [player.name, "Maybe Not."]
-                        },
-                        '3': {
-                            'label': "Say 'no'",
-                            'command': 'nameSay',
-                            'args': [player.name, "No. Bother someone else."]
-                        }
-                    }
-                });
-
-                doQuestionByName('intro');
-
-                // player.name = answer;
-                // output("Welcome "+player.name);
-            }
-
-            initializeGame( player );
-
-            // function question( questionText, optionText, options ){
-
-            //     output(questionText + "<br/>"+optionText);
-            //     isExpectingAnswer = true;
-            //     questionIdTracker =  
-            //     questionOptions = options;
-            // }
-
-            function questionClass( obj ) {
-
-                this.id = idTicker();
-                this.name = obj.name;
-                this.questionText = obj.questionText;
-                this.optionText = obj.optionText;
-                this.optionInputs = obj.optionInputs;   // items
-                this.optionList = obj.optionList;       // an array of option objects:
-                                                        //   [{ 'command', 'outcome' }, { 'command', 'outcome' } ... ]
-                questionList.push(this);
-            }
-
-            function idTicker(){
-                globalId += 1;
-                return globalId;
-            }
-
-            function doAnswer( questionId ) {
-                var q = getQuestionById(questionId);
-
-                var choice = parseInputForOptionInputs(input, q.optionInputs);
-
-                console.log("Doing answer. Question id: "+questionId+", optionInputs: "+q.optionInputs+", choice: "+choice);
-                // Do the choice
-
-                console.log(q.optionList[choice]);
-                q.optionList[choice]['command']("Test", "Message");
-            }
-
-            function doQuestionByName( name ){
-                
-                var q = getQuestionByName(name);
-
-                output(q.questionText + "<br/>");
-                output( "<span class=\"option-text\">" + q.optionText +"</span>");
-
-                for (var i = 0; i < q.optionInputs.length; i++) {
-                    output("["+q.optionInputs[i] + "] " + q.optionList[q.optionInputs[i]]['label'] );
-                }
-
-                isExpectingAnswer = true;
-                questionIdTracker = q.id;
-            }
-
-            function getQuestionByName( name ){
-
-                var q = null;
-
-                for (var i=0; i < questionList.length; i++){
-                    if ( questionList[i].name === name ) {
-                        q = questionList[i];
-                        return q;
-                    }
-                }
-
-                if (q === null){
-                    return false;
-                }
-            }
-
-            function getQuestionById( id ){
-
-                var q = null; 
-
-                for (var i=0;i < questionList.length;i++){
-                    if ( questionList[i].id === id ) {
-                        q = questionList[i];
-                        return q;
-                    }
-                }
-
-                if (q === null){
-                    return false;
-                }
-            }
-
-            function parseInputForOptionInputs( input, optionInputs ) {
-
-                var o = optionInputs.indexOf( input.toLowerCase() );
-                if ( o != -1 ) {
-                    console.log("\""+input+"\" is an option in "+optionInputs);
-                    return optionInputs[o];
-
-                } else {
-                    console.log("\""+input+"\" is not found in "+optionInputs);
-                    notifications.innerHTML = "\""+input+"\" is not an option.";
-                    return false;
-                }
-
-            }
-
-
-            //------------------------------------
-            //  The game loop
-            //------------------------------------
-
-            function update() {
-
-                // Enter key is pressed
-                console.log("Input: "+playerInput.value);
-                input = playerInput.value;
-                messages.push(input);
-                // Reset player input element to blank
-                playerInput.value = '';
-
-                // If the game is expecting an answer, then save it
-                if (isExpectingAnswer) {
-                    answer = input;
-                    // Reset flag
-                    isExpectingAnswer = false;
-
-                    doAnswer(questionIdTracker);
-                } else {
-                    parseInput(input);    
-                }
-            
-                count += 1;
-            }
-
-        </script>
+        <script src="main.js" type="text/javascript" rel="javascript"></script>
     </body>
 </html>
