@@ -158,7 +158,8 @@ function checkMagicLevel( mLevel ) {
 
 // Set up game window
 var gameWindow = document.getElementById('game-window');
-gameWindow.innerHTML = "Welcome...";
+var outputTextBox = document.getElementById('output-text'); // child node of game-window
+outputTextBox.innerHTML = "Output Text Box Ready...";
 
 // Set up a way for the player to input text
 var playerInput = document.getElementById('input');
@@ -248,12 +249,18 @@ function doWalk(){
     console.log("Walking...");
 }
 
-function output( outputString ) {
-    gameWindow.innerHTML += "<span class=\"output\">"+outputString+"</span>";
+var output = {
+
+    'text': function(outputString) {
+        outputTextBox.innerHTML += "<span class=\"output\">"+outputString+"</span>";
+    },
+    'notification' : function(outputString) {
+        outputTextBox.innerHTML += "<span class=\"notification\">"+outputString+"</span>";
+    }
 }
 
 function nameSay( args ) {
-    output( args.name + "> " + args.text);
+    output.text( args.name + "> " + args.text);
 }
 // var answer = '';
 // function setAnswer( input ){
@@ -392,7 +399,7 @@ function doAnswer( questionId ) {
 
         var a = getAnswerByQuestionNameAndOptionInput( q.name, choice );
 
-        setTimeout( function(){output(a.text)}, 1200 );
+        setTimeout( function(){output.text(a.text)}, 1200 );
 
         return true;
     } else {
@@ -405,11 +412,11 @@ function doQuestionByName( name ){
     
     var q = getQuestionByName(name);
 
-    output(q.text + "<br/>");
-    output( "<span class=\"option-text\">" + q.optionText +"</span>");
+    output.text(q.text + "<br/>");
+    output.text( "<span class=\"option-text\">" + q.optionText +"</span>");
 
     for (var i = 0; i < q.optionInputs.length; i++) {
-        output("["+q.optionInputs[i] + "] " + q.optionDict[q.optionInputs[i]]['label'] );
+        output.text("["+q.optionInputs[i] + "] " + q.optionDict[q.optionInputs[i]]['label'] );
     }
 
     isExpectingAnswer = true;
@@ -457,7 +464,8 @@ function parseInputForOptionInputs( input, optionInputs ) {
 
     } else {
         console.log("\""+input+"\" is not found in "+optionInputs);
-        notifications.innerHTML = "\""+input+"\" is not an option.";
+        output.notification("\""+input+"\" is not an option.");
+
         return false;
     }
 
@@ -479,7 +487,7 @@ function processInput() {
     playerInput.value = '';
 
     // Show the input in the output
-    output( '<span class="faded-grey">' + input +'</span>' );
+    output.text( '<span class="faded-grey">' + input +'</span>' );
 
     // If the game is expecting an answer, then save it
     if (isExpectingAnswer) {

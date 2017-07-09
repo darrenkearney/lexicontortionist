@@ -15,6 +15,7 @@ body.flex {
 
 .container {
     width: 400px;
+    overflow: auto
 }
 
 .primary-color {
@@ -53,7 +54,7 @@ body.flex {
 
 
 #game-window {
-    padding: 20px;
+    padding: 0;
     border: 4px solid #5a514b;
     height: 300px;
     width: 100%;
@@ -63,9 +64,29 @@ body.flex {
     align-items: flex-start;
     justify-content: flex-end;
     box-shadow: inset 0px 20px 20px -16px rgba(0,0,0,0.5);
+/*    min-height: -webkit-min-content;*/
 }
+
+#output-text {
+    display: flex;
+    padding: 20px;
+    margin: 0;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
 .output {
     opacity: 0.9;
+}
+
+/* reset input */
+#input:focus,
+#input:hover,
+#input:active {
+    border: none;
+    outline: none;
 }
 
 #input {
@@ -77,9 +98,20 @@ body.flex {
     color: #f5da00;
     font-size: 200%;
     font-family: monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
     font-weight: 600;
     transition: all 200ms ease;
     box-shadow: none;
+}
+
+#input:focus,
+#input:hover,
+#input:active {
+    border: 4px solid #ada39d;
+}
+input#input {
+    border: 4px solid #5a514b;
 }
 
 .border-dashed,
@@ -88,8 +120,13 @@ body.flex {
 }
 
 #notifications {
-
 }
+
+.notification {
+    color: #ff6312;
+    font-family: monospace;
+}
+
 * {
     box-sizing:border-box;
 }
