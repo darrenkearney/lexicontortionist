@@ -169,6 +169,8 @@ var messages = []; // stores previous input
 var questionList = []; // List of question objects
 var answerList = []; // List of answer objects
 
+var availableTargets = [];
+
 // Set up a notification area
 var notifications = document.getElementById('notifications');
 
@@ -193,6 +195,7 @@ playerInput.onkeypress = function(e){
 
 var commands = [
     'attack',
+	'look',
     'take',
     'talk',
     'use',
@@ -221,6 +224,8 @@ function doCommand( command ) {
 
     if ( command[0] == 'attack' ) {
         doAttack(command);
+    } else if ( command[0] == 'look' ) {
+        doLook(command);
     } else if ( command[0] == 'take' ) {
         doTake(command);
     } else if ( command[0] == 'talk' ) {
@@ -233,20 +238,47 @@ function doCommand( command ) {
 
 }
 
-function doAttack(){
-    console.log("Attacking...");
+function doAttack( command ){
+    console.log("Attacking: "+command );
+	if ( command[1] != "undefined" ){
+		for ( var i = 0; i < availableTargets.length; i++ ){
+			if (command[1].toLowerCase() == availableTargets[i].name.toLowerCase() ) {
+				console.log("Target found. Attacking "+ availableTargets[i]);
+				output.text("Attacking <span class=\"target\">"+ availableTargets[i].name.toUpperCase()+"</span>");
+			}
+		} 	
+	}
+	else {
+		console.log("Attack <target> undefined. doAttack() requires ATTACK <TARGET> Syntax.");
+	}
+	console.log("Attack end.");
 }
-function doTake(){
+function doTake( command ){
     console.log("Taking...");
 }
-function doTalk(){
+function doTalk( command ){
     console.log("Talking...");
 }
-function doUse(){
+function doUse( command ){
     console.log("Using...");
 }
-function doWalk(){
+function doWalk( command ){
     console.log("Walking...");
+}
+function doLook( command ){
+    console.log("Looking...");
+
+	var _output = "";
+	for (var i=0; i<availableTargets.length;i++) {
+		_output += "<span class=\"target\">" + availableTargets[i].name.toUpperCase() + "</span>";
+		if ( i+1 == availableTargets.length){
+			_output += ".";
+		} else {
+			_output += ", ";
+		}
+	}
+
+	output.text("You see all! "+ _output);
 }
 
 var output = {
@@ -292,10 +324,17 @@ function initializeGame( player ){
     // output("Hello traveller! What is <i>your</i> name?");
     // isExpectingAnswer = true;
 
+	availableTargets.push({
+		'name':'goblin',
+		'health': 3,
+		'damage': 1
+	});
+
+
     question = new questionObject({
         'name': 'intro',
-        'text': 'Hello traveller! What is <i>your</i> name?',
-        'optionText': "Enter your name",
+        'text': 'Hello traveller!',
+        'optionText': "Select an option:",
         'optionInputs': ['1','2','3'],
         'optionDict': {
             '1': {

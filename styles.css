@@ -127,6 +127,10 @@ input#input {
     font-family: monospace;
 }
 
+.target {
+	color:#f5da00;
+}
+
 * {
     box-sizing:border-box;
 }
