@@ -243,8 +243,20 @@ function doAttack( command ){
 	if ( command[1] != "undefined" ){
 		for ( var i = 0; i < availableTargets.length; i++ ){
 			if (command[1].toLowerCase() == availableTargets[i].name.toLowerCase() ) {
+                var target = availableTargets[i];
 				console.log("Target found. Attacking "+ availableTargets[i]);
-				output.text("Attacking <span class=\"target\">"+ availableTargets[i].name.toUpperCase()+"</span>");
+				output.text("Attacking <span class=\"target\">"+ availableTargets[i].name.toUpperCase()+"</span>!");
+                target.hp = target.hp - player.damage;
+                if (target.hp <= 0) {
+                    availableTargets.splice( i, 1 );
+                    output.text("You killed "+target.name+"!");
+                    player.xp = parseInt(target.xp) + parseInt(player.xp);
+                    output.text("You gained <span class=\"xp\">"+target.xp+"</span> XP!");
+                    output.notification("XP: "+player.xp);
+                } else {
+                    output.text("You attacked <span class=\"target\">"+target.name.toUpperCase()+"</span> for <span class=\"hp\">"+player.damage+"</span> damage.");
+                    output.text( "<span class=\"target\">"+target.name.toUpperCase() +"</span> has <span class=\"hp\">"+ target.hp +"</span> / " +target.hpMax+" HP.");
+                }
 			}
 		} 	
 	}
@@ -312,23 +324,43 @@ function getAnswer(){
 //------------------------------------
 
 var player = {
-    'name': 'Joxer'
+    'name': 'Joxer',
+    'damage': 1,
+    'hp': 10,
+    'hpMax': 10,
+    'xp': 0
 }
 
 player.name; // "Joxer"
 
+function enemyObject( obj ){
+    this.name = obj.name;
+    this.hp = obj.hp;
+    this.hpMax = obj.hpMax;
+    this.damage = obj.damage;
+    this.xp = obj.xp;
+}
+
 function initializeGame( player ){
 
-    input = '';
     
     // output("Hello traveller! What is <i>your</i> name?");
     // isExpectingAnswer = true;
 
-	availableTargets.push({
-		'name':'goblin',
-		'health': 3,
-		'damage': 1
-	});
+	availableTargets.push(
+        new enemyObject({
+            'name':'goblin',
+            'hp': 3,
+            'hpMax': 3,
+            'damage': 1,
+            'xp': 1
+        }), new enemyObject({
+            'name':'Julior',
+            'hp': 5,
+            'hpMax': 5,
+            'damage': 2,
+            'xp': 2
+    }));
 
 
     question = new questionObject({
@@ -415,7 +447,6 @@ function getAnswerByQuestionNameAndOptionInput( questionName, optionInput ){
 
     return answer;
 }
-
 
 function idTicker(){
     globalId += 1;

@@ -131,6 +131,14 @@ input#input {
 	color:#f5da00;
 }
 
+.hp {
+    color: #efcc12;
+}
+
+.xp {
+    color: #0097f5;
+}
+
 * {
     box-sizing:border-box;
 }
