@@ -65,7 +65,7 @@
 //     }
 
 //     this.inventory = [];
-    
+
 //     this.addItemToInventory = function (item) {
 //         console.log( this.name + " add's " + item + " to inventory.");
 //         this.inventory.push(item);
@@ -258,7 +258,7 @@ function doAttack( command ){
                     output.text( "<span class=\"target\">"+target.name.toUpperCase() +"</span> has <span class=\"hp\">"+ target.hp +"</span> / " +target.hpMax+" HP.");
                 }
 			}
-		} 	
+		}
 	}
 	else {
 		console.log("Attack <target> undefined. doAttack() requires ATTACK <TARGET> Syntax.");
@@ -296,7 +296,15 @@ function doLook( command ){
 var output = {
 
     'text': function(outputString) {
-        outputTextBox.innerHTML += "<span class=\"output\">"+outputString+"</span>";
+        // outputTextBox.innerHTML += "<span class=\"output fade-in\">"+outputString+"</span>";
+        // outputTextBox.createElement()
+
+        div = document.createElement('div');
+        outputTextBox.appendChild(div);
+        div.innerHTML = "<span class=\"output fade-in\">"+outputString+"</span>";
+
+div.className = 'fade';
+
     },
     'notification' : function(outputString) {
         outputTextBox.innerHTML += "<span class=\"notification\">"+outputString+"</span>";
@@ -304,7 +312,7 @@ var output = {
 }
 
 function nameSay( args ) {
-    output.text( args.name + "> " + args.text);
+    output.text( "<span class=\"name\">" + args.name + "</span> \"" + args.text + "\"");
 }
 // var answer = '';
 // function setAnswer( input ){
@@ -343,7 +351,7 @@ function enemyObject( obj ){
 
 function initializeGame( player ){
 
-    
+
     // output("Hello traveller! What is <i>your</i> name?");
     // isExpectingAnswer = true;
 
@@ -479,8 +487,19 @@ function doAnswer( questionId ) {
 }
 
 function doQuestionByName( name ){
-    
     var q = getQuestionByName(name);
+    doQuestion(q);
+}
+
+function doQuestionById( id ){
+    var q = getQuestionById(id);
+    doQuestion(q);
+}
+
+// Pass the question object into this one
+function doQuestion( questionObject ) {
+
+    var q = questionObject;
 
     output.text(q.text + "<br/>");
     output.text( "<span class=\"option-text\">" + q.optionText +"</span>");
@@ -511,7 +530,7 @@ function getQuestionByName( name ){
 
 function getQuestionById( id ){
 
-    var q = null; 
+    var q = null;
 
     for (var i=0;i < questionList.length;i++){
         if ( questionList[i].id === id ) {
@@ -557,7 +576,7 @@ function processInput() {
     playerInput.value = '';
 
     // Show the input in the output
-    output.text( '<span class="faded-grey">' + input +'</span>' );
+    output.text( '<span class="faded-grey">> ' + input +'</span>' );
 
     // If the game is expecting an answer, then save it
     if (isExpectingAnswer) {
@@ -569,9 +588,10 @@ function processInput() {
             isExpectingAnswer = false;
         } else {
             isExpectingAnswer = true;
+            doQuestionById(questionIdTracker);
         }
     } else {
-        parseInput(input);    
+        parseInput(input);
     }
 
     // Show the input in the output

@@ -142,3 +142,20 @@ input#input {
 * {
     box-sizing:border-box;
 }
+
+.name {
+    color: rgba(254,222,0,0.9);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in{
+    animation: fadeIn 0.24s forwards;
+}
