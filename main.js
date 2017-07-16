@@ -195,7 +195,8 @@ playerInput.onkeypress = function(e){
 
 var commands = [
     'attack',
-	'look',
+    'look',
+    'help',
     'take',
     'talk',
     'use',
@@ -226,6 +227,8 @@ function doCommand( command ) {
         doAttack(command);
     } else if ( command[0] == 'look' ) {
         doLook(command);
+    } else if ( command[0] == 'help' ) {
+        doHelp(command);
     } else if ( command[0] == 'take' ) {
         doTake(command);
     } else if ( command[0] == 'talk' ) {
@@ -265,11 +268,39 @@ function doAttack( command ){
 	}
 	console.log("Attack end.");
 }
+function doHelp( command ){
+    console.log("Helping...");
+    _output = "<ul style=\"list-style: none\"";
+
+    for (var i = 0; i < commands.length; i++) {
+        _output += "<li>"+commands[i]+"";
+        if ( i+1 == commands.length){
+            _output += ".";
+        } else {
+            _output += ", ";
+        }
+        _output += "</li>";
+    }
+    _output += "</ul>";
+    output.notification(_output);
+}
 function doTake( command ){
     console.log("Taking...");
 }
 function doTalk( command ){
     console.log("Talking...");
+
+    if ( command[1] != 'undefined' ){
+        if ( command[1].toLowerCase() === 'to' || command[1].toLowerCase() === 'with' ) {
+            command.splice(1,1); // Remove the 'to' or 'with'
+        }
+
+        for (var i=0; i<availableTargets.length;i++) {
+            if ( availableTargets[i].name.toLowerCase() === command[1].toLowerCase() ) {
+                availableTargets[i].talk();
+            }
+        }
+    }
 }
 function doUse( command ){
     console.log("Using...");
@@ -281,16 +312,21 @@ function doLook( command ){
     console.log("Looking...");
 
 	var _output = "";
-	for (var i=0; i<availableTargets.length;i++) {
-		_output += "<span class=\"target\">" + availableTargets[i].name.toUpperCase() + "</span>";
-		if ( i+1 == availableTargets.length){
-			_output += ".";
-		} else {
-			_output += ", ";
-		}
-	}
 
-	output.text("You see all! "+ _output);
+    if (availableTargets.length > 0) {
+    	for (var i=0; i<availableTargets.length;i++) {
+    		_output += "<span class=\"target\">" + availableTargets[i].name.toUpperCase() + "</span>";
+    		if ( i+1 == availableTargets.length){
+    			_output += ".";
+    		} else {
+    			_output += ", ";
+    		}
+    	}
+    }
+    else {
+        _output = "nothing.";
+    }
+	output.text("You look around. You see "+ _output);
 }
 
 var output = {
@@ -302,12 +338,13 @@ var output = {
         div = document.createElement('div');
         outputTextBox.appendChild(div);
         div.innerHTML = "<span class=\"output fade-in\">"+outputString+"</span>";
-
-div.className = 'fade';
-
+        div.className = 'fade';
     },
     'notification' : function(outputString) {
         outputTextBox.innerHTML += "<span class=\"notification\">"+outputString+"</span>";
+    },
+    'say': function ( args ) {
+        output.text( "<span class=\"name\">" + args.name + "</span> \"" + args.text + "\"");
     }
 }
 
@@ -343,32 +380,70 @@ player.name; // "Joxer"
 
 function enemyObject( obj ){
     this.name = obj.name;
+    this.type = obj.type;
     this.hp = obj.hp;
     this.hpMax = obj.hpMax;
     this.damage = obj.damage;
     this.xp = obj.xp;
+    var talkText = obj.talkText;
+
+    this.setTalk = function ( value ) {
+        if (typeof value != 'string') {
+            console.log("setTalk() value is not a string.");
+            return;
+        }
+        else {
+            talkText = value;
+        }
+    }
+
+    this.getTalk = function() {
+        return talkText;
+    }
+
+    this.talk = function() {
+        console.log( "Talking: " + this.name +": "+ talkText);
+        return output.say( {'name':this.name, 'text':talkText} );
+    }
+
+    //     if ( inputText === 'undefined' && typeof inputText == 'string' ) {
+    //         output.text( inputText );
+    //     }
+    //     else {
+    //         output.text( talkText );
+    //     }
+    // }
 }
 
+
+
 function initializeGame( player ){
-
-
     // output("Hello traveller! What is <i>your</i> name?");
     // isExpectingAnswer = true;
 
-	availableTargets.push(
-        new enemyObject({
-            'name':'goblin',
+    goblin = new enemyObject({
+            'name':'Goblin',
+            'type':'GOBLIN',
+            'class':'fighter',
             'hp': 3,
             'hpMax': 3,
             'damage': 1,
-            'xp': 1
-        }), new enemyObject({
+            'xp': 1,
+            'talkText': "GRrrurumblor"
+        });
+
+    sorceress = new enemyObject({
             'name':'Julior',
+            'type':'GOBLIN',
+            'class':'sorcerer',
             'hp': 5,
             'hpMax': 5,
             'damage': 2,
-            'xp': 2
-    }));
+            'xp': 2,
+            'talkText': "Kazam!"
+    })
+
+	availableTargets.push( goblin, sorceress );
 
 
     question = new questionObject({
@@ -436,7 +511,7 @@ function AnswerClass( obj ) {
     this.text = obj.text;
     // this.optionInputs = obj.optionInputs;   // items
     // this.commandList = obj.commandList;       // an array of option objects:
-                                            //   [{ 'command', 'outcome' }, { 'command', 'outcome' } ... ]
+    //   [{ 'command', 'outcome' }, { 'command', 'outcome' } ... ]
     answerList.push(this);
 }
 
